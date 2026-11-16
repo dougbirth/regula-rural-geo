@@ -1,7 +1,7 @@
 """Consulta à base nacional SIGEF com resultado único em Shapefile."""
 from uuid import UUID
 from qgis.PyQt.QtCore import QVariant
-from qgis.core import QgsProcessingException
+from qgis.core import QgsExpression, QgsProcessingException
 from .consulta_shp import ConsultaShp, campo, filtro_area, uri_wfs
 from .estilos import aplicar_estilo_geo_incra
 
@@ -19,21 +19,21 @@ def normalizar_sigef(codigo):
         raise QgsProcessingException("Informe o código UUID completo da parcela SIGEF.")
 
 
-def consulta_sql(codigo="", rect=None):
+def consulta_filtro(codigo="", rect=None):
     codigo = normalizar_sigef(codigo)
     if rect is None and not codigo:
         raise QgsProcessingException("Desenhe uma área na tela ou informe o código da parcela SIGEF.")
     conditions = []
     if codigo:
-        conditions.append(f'"parcela_codigo" = \'{codigo}\'')
-    area = filtro_area(rect, "geometry")
+        conditions.append(QgsExpression.createFieldEqualityExpression("parcela_codigo", codigo))
+    area = filtro_area(rect)
     if area:
         conditions.append(area)
-    return f'SELECT * FROM "{TYPENAME}" WHERE ' + " AND ".join(conditions)
+    return " AND ".join(conditions)
 
 
-def wfs_uri(sql):
-    return uri_wfs(ENDPOINT, TYPENAME, sql)
+def wfs_uri(expression):
+    return uri_wfs(ENDPOINT, TYPENAME, expression)
 
 
 class ConsultarSigef(ConsultaShp):
@@ -84,4 +84,4 @@ class ConsultarSigef(ConsultaShp):
         return normalizar_sigef(value)
 
     def consultas(self, codigo, rect):
-        return [(TYPENAME, consulta_sql(codigo, rect))]
+        return [(TYPENAME, consulta_filtro(codigo, rect))]

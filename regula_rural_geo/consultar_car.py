@@ -1,7 +1,7 @@
 """Busca nacional do CAR com resultado único em Shapefile."""
 import re
 from qgis.PyQt.QtCore import QVariant
-from qgis.core import QgsProcessingException
+from qgis.core import QgsExpression, QgsProcessingException
 from .consulta_shp import ConsultaShp, campo, filtro_area, uri_wfs
 from .estilos import aplicar_estilo_car
 
@@ -37,19 +37,19 @@ def consultas_car(codigo="", rect=None):
         raise QgsProcessingException("Desenhe uma área na tela ou informe o número do CAR federal.")
     conditions = []
     if codigo:
-        conditions.append(f'"cod_imovel" = \'{codigo}\'')
-    area = filtro_area(rect, "geo_area_imovel")
+        conditions.append(QgsExpression.createFieldEqualityExpression("cod_imovel", codigo))
+    area = filtro_area(rect)
     if area:
         conditions.append(area)
     queries = []
     for uf in ([uf_codigo] if uf_codigo else UF_CODES):
         typename = f"sicar:sicar_imoveis_{uf.lower()}"
-        queries.append((uf, typename, f'SELECT * FROM "{typename}" WHERE ' + " AND ".join(conditions)))
+        queries.append((uf, typename, " AND ".join(conditions)))
     return queries
 
 
-def car_uri(typename, sql):
-    return uri_wfs(ENDPOINT_CAR, typename, sql)
+def car_uri(typename, expression):
+    return uri_wfs(ENDPOINT_CAR, typename, expression)
 
 
 class ConsultarCar(ConsultaShp):
@@ -94,4 +94,4 @@ class ConsultarCar(ConsultaShp):
         return normalizar_car(value)[0]
 
     def consultas(self, codigo, rect):
-        return [(typename, sql) for _, typename, sql in consultas_car(codigo, rect)]
+        return [(typename, expression) for _, typename, expression in consultas_car(codigo, rect)]

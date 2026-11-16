@@ -4,7 +4,7 @@ qgisMinimumVersion=3.40
 qgisMaximumVersion=3.99
 description=Consultas nacionais ao SIGEF e CAR com resultado único em SHP editável. Elaboração: Douglas Nascimento. Queries Brazilian rural property boundaries by area or registration code.
 about=Elaboração: Douglas Nascimento. Contato: douglas.regularural@gmail.com. Consultas nacionais por área ou código ao SIGEF/INCRA e ao CAR/SICAR. Cada execução gera um único Shapefile editável com os imóveis encontrados. Acesso à internet necessário para consultar; os arquivos salvos são cópias locais sem recarga automática. Usa apenas bibliotecas fornecidas pelo QGIS. Não é um produto oficial dos órgãos. Não inclui SNCI, assentamentos ou camadas ambientais internas do CAR. Interface em português; dados do Brasil. Testado no Windows com QGIS 3.44.15.
-version=0.4.0
+version=0.4.1
 author=Douglas Nascimento
 email=douglas.regularural@gmail.com
 category=Vector
@@ -12,9 +12,9 @@ hasProcessingProvider=yes
 experimental=False
 deprecated=False
 icon=icon.png
-homepage=https://regula-rural-geo.douglasdsn.chatgpt.site
+homepage=https://regularural.com/Publicacao.aspx?id=713082
 repository=https://github.com/dougbirth/regula-rural-geo
 tracker=https://github.com/dougbirth/regula-rural-geo/issues
 tags=cadastre,land parcels,brazil,shapefile,car,sigef
-changelog=0.4.0: Resultado único em SHP editável; filtro de área/código conferido localmente; consulta nacional sem seleção de UF; nova logo e créditos de elaboração.
+changelog=0.4.1: Filtros WFS serializados pelo QGIS sem montagem de SQL; valores escapados pela API; página oficial de documentação. 0.4.0: Resultado único em SHP editável; consulta nacional sem seleção de UF; nova logo e créditos.
 

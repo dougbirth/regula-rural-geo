@@ -12,13 +12,9 @@ QGIS Processing tools to query Brazilian rural property boundaries from the publ
 
 Cada consulta retorna uma única camada, somente com os imóveis encontrados. As fontes estaduais do CAR são consultadas internamente, sem criar 27 camadas no projeto. Os filtros são aplicados no servidor e conferidos antes da gravação local. São preservados os polígonos inteiros que intersectam o retângulo; não se trata de recorte geométrico.
 
-## Download
-
-Baixe o pacote e veja as instruções em [REGULA RURAL GEO](https://regula-rural-geo.douglasdsn.chatgpt.site).
-
 ## Instalação e uso
 
-1. No QGIS, abra **Complementos → Gerenciar e Instalar Complementos → Instalar a partir de ZIP** e escolha o pacote `REGULA_RURAL_GEO_0.4.0.zip`.
+1. Baixe o pacote na [página oficial](https://regularural.com/Publicacao.aspx?id=713082). No QGIS, abra **Complementos → Gerenciar e Instalar Complementos → Instalar a partir de ZIP** e escolha `REGULA_RURAL_GEO_0.4.1.zip`.
 2. Habilite **REGULA RURAL GEO**.
 3. Abra **Processamento → Caixa de Ferramentas → REGULA RURAL GEO**.
 4. Desenhe uma área pelo botão à direita ou informe o código completo. Se ambos forem preenchidos, ambos serão aplicados.
@@ -44,11 +40,14 @@ Cada execução consulta os dados disponíveis on-line. O resultado é uma cópi
 
 Este é um complemento independente, sem vínculo oficial com INCRA, SICAR ou QGIS. A consulta nacional por área pode levar alguns minutos, conforme a extensão e a disponibilidade dos servidores.
 
-## Validação da versão 0.4.0
+## Alterações da versão 0.4.1
+
+As consultas usam expressões QGIS convertidas pelo provedor WFS em filtros OGC, sem construir comandos SQL. Identificadores continuam sendo validados e os valores são escapados pela API do QGIS. A verificação local de código e interseção permanece ativa antes de gravar o SHP.
+
+## Validação
 
 Consultas reais por número em MT e SP, consulta SIGEF por UUID e consulta CAR por área nas 27 fontes. Verificados: resultado único, correspondência espacial, identificadores completos, edição e gravação de atributos, reabertura do SHP e do projeto, cores/transparência, resultado vazio, cancelamento e falha parcial.
 
 ## Licença
 
 Código sob licença MIT; veja `LICENSE`. Créditos de elaboração: Douglas Nascimento.
-

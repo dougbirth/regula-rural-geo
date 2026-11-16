@@ -8,7 +8,7 @@ from qgis.PyQt.QtCore import QDateTime, Qt, QVariant
 from qgis.PyQt.QtGui import QIcon
 from qgis.core import (
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsDataSourceUri,
-    QgsFeature, QgsFeatureRequest, QgsField, QgsFields, QgsGeometry,
+    QgsExpression, QgsFeature, QgsFeatureRequest, QgsField, QgsFields, QgsGeometry,
     QgsProcessing, QgsProcessingAlgorithm, QgsProcessingContext,
     QgsProcessingException, QgsProcessingParameterExtent,
     QgsProcessingParameterFileDestination, QgsProcessingParameterString,
@@ -25,7 +25,7 @@ def verificar_cancelamento(feedback):
         raise ConsultaCancelada()
 
 
-def filtro_area(rect, geometry_field):
+def filtro_area(rect):
     if rect is None:
         return None
     coords = [rect.xMinimum(), rect.yMinimum(), rect.xMaximum(), rect.yMaximum()]
@@ -33,11 +33,12 @@ def filtro_area(rect, geometry_field):
             or not (-180 <= coords[0] < coords[2] <= 180)
             or not (-90 <= coords[1] < coords[3] <= 90)):
         raise QgsProcessingException("Área inválida. Informe uma extensão com SRC definido.")
-    envelope = ",".join(format(v, ".15g") for v in coords)
-    return f'ST_Intersects("{geometry_field}", ST_MakeEnvelope({envelope},4674))'
+    # Let the WFS provider encode geometry and axis order in its OGC filter.
+    polygon = QgsExpression.quotedString(QgsGeometry.fromRect(rect).asWkt(15))
+    return f"intersects($geometry, geom_from_wkt({polygon}))"
 
 
-def uri_wfs(endpoint, typename, sql):
+def uri_wfs(endpoint, typename, expression):
     uri = QgsDataSourceUri()
     for key, value in {
         "url": endpoint, "typename": typename, "version": "2.0.0",
@@ -45,7 +46,8 @@ def uri_wfs(endpoint, typename, sql):
         "restrictToRequestBBOX": "1",
     }.items():
         uri.setParam(key, value)
-    uri.setSql(sql)
+    # QGIS serializes this expression to an OGC filter; no SQL is constructed.
+    uri.setParam("filter", expression)
     return uri.uri(False)
 
 
@@ -251,10 +253,10 @@ class ConsultaShp(QgsProcessingAlgorithm):
         return True
 
     def fontes(self, feedback):
-        for index, (typename, sql) in enumerate(self._queries):
+        for index, (typename, expression) in enumerate(self._queries):
             verificar_cancelamento(feedback)
             feedback.pushInfo(f"Consultando a base nacional ({index + 1}/{len(self._queries)})…")
-            yield QgsVectorLayer(uri_wfs(self.endpoint, typename, sql), typename, "WFS")
+            yield QgsVectorLayer(uri_wfs(self.endpoint, typename, expression), typename, "WFS")
             feedback.setProgress(90 * (index + 1) / len(self._queries))
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -263,7 +265,7 @@ class ConsultaShp(QgsProcessingAlgorithm):
             result = exportar_shp(
                 self.fontes(feedback), self.schema, self._path, self._name, self.code_field,
                 self._codigo, self._rect, self.style, self.endpoint,
-                [sql for _, sql in self._queries], context, feedback,
+                [expression for _, expression in self._queries], context, feedback,
             )
         except ConsultaCancelada:
             return {}
