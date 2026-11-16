@@ -274,7 +274,7 @@ class ConsultaShp(QgsProcessingAlgorithm):
     def shortHelpString(self):
         return (
             "<h3>" + self.displayName() + "</h3>"
-            "<p><b>Elaboração: Regula Rural e Douglas Nascimento.</b><br>"
+            "<p><b>Elaboração: Douglas Nascimento.</b><br>"
             "Contato: <a href='mailto:douglas.regularural@gmail.com'>douglas.regularural@gmail.com</a></p>"
             "<p><b>Busca nacional, sem seleção de UF.</b> Desenhe uma área pelo botão à direita "
             "ou informe o código completo. Se preencher os dois campos, ambos serão usados.</p>"

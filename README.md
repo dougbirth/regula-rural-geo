@@ -1,6 +1,6 @@
 # REGULA RURAL GEO
 
-**Elaboração: Regula Rural e Douglas Nascimento**  
+**Elaboração: Douglas Nascimento**  
 **Contato:** douglas.regularural@gmail.com
 
 QGIS Processing tools to query Brazilian rural property boundaries from the public SIGEF/INCRA and CAR/SICAR services. Search by map extent or registration code and receive a single editable Shapefile. The interface is in Portuguese and coverage is Brazil.
@@ -11,6 +11,10 @@ QGIS Processing tools to query Brazilian rural property boundaries from the publ
 - **Consultar base CAR:** consulta nacional por área ou número federal completo do CAR. Resultado verde sólido com 50% de transparência.
 
 Cada consulta retorna uma única camada, somente com os imóveis encontrados. As fontes estaduais do CAR são consultadas internamente, sem criar 27 camadas no projeto. Os filtros são aplicados no servidor e conferidos antes da gravação local. São preservados os polígonos inteiros que intersectam o retângulo; não se trata de recorte geométrico.
+
+## Download
+
+Baixe o pacote e veja as instruções em [REGULA RURAL GEO](https://regula-rural-geo.douglasdsn.chatgpt.site).
 
 ## Instalação e uso
 
@@ -46,5 +50,5 @@ Consultas reais por número em MT e SP, consulta SIGEF por UUID e consulta CAR p
 
 ## Licença
 
-Código sob licença MIT; veja `LICENSE`. Créditos de elaboração: Regula Rural e Douglas Nascimento.
+Código sob licença MIT; veja `LICENSE`. Créditos de elaboração: Douglas Nascimento.
 
